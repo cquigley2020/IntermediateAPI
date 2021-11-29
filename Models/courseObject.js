@@ -9,7 +9,7 @@ const Course = new Schema({
 
     courseCredits:
     {
-        type: Number,
+        type: String,
         required: true
     },
 

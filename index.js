@@ -61,7 +61,7 @@ app.post('/addCourse', async (req,res) => {
 app.get('/getAllCourses', async (req,res) => {
     try{
         let courses = await Course.find({}).lean();
-        return res.status(200).json(courses);
+        return res.status(200).json({"courses": courses});
     }
     catch{
         return res.status(400).json("(message: Failed to Access Course Data)")
@@ -119,8 +119,8 @@ app.get('/findStudent', async (req,res) => {
 app.post('/editStudentById', async (req,res)=>{
     try{
         let student = await Student.updateOne({id: req.body.id},
-            {fname: req.body.fname},
-            {upsert: true});
+            {fname: req.body.fname})
+        
 
         if(student)
         {
@@ -159,6 +159,25 @@ app.post('/editStudentByFname', async (req,res)=>{
     }
 });
 
+app.post('/deleteStudentById', async (req,res)=>{
+    try{
+        let student = await Student.deleteOne({_id: req.body.id})
+       
+        if(student)
+        {
+            
+            res.status(200).json("(message: Student Deleted)");
+        }
+        else{
+            res.status(200).json("(message: No Student Deleted - query null)");
+        }
+    }
+    catch{
+        return res.status(500).json("(message: Failed to Delete Student)");
+    }
+    
+});
+
 app.post('/editCourseByCourseName', async (req,res)=>{
     try{
         let course = await Course.updateOne({courseName: req.body.courseName},
@@ -182,13 +201,11 @@ app.post('/editCourseByCourseName', async (req,res)=>{
 
 app.post('/deleteCourseById', async (req,res)=>{
     try{
-        let course = await Course.findOne({id: req.body.id},
-        
-            {upsert: true});
-
+        let course = await Course.deleteOne({_id: req.body.id})
+       
         if(course)
         {
-            await Course.deleteOne({id: req.body.id});
+            //await Course.deleteOne({_id: req.body.id});
             res.status(200).json("(message: Course Deleted)");
         }
         else{
